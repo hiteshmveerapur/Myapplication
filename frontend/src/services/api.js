@@ -1,6 +1,6 @@
 const api = axios.create({
   // Put your actual Render URL here!
-  baseURL: "https://myapplication-backend.onrender.com/api", 
+  baseURL: "https://myapplication-backend.onrender.com", 
   headers: { "Content-Type": "application/json" },
   timeout: 15000,
 });
