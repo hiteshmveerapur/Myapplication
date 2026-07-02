@@ -1,16 +1,9 @@
-import axios from "axios";
-
 const api = axios.create({
-  // changed from "http://localhost:5000/api"
-  baseURL: "/api", 
-
-  headers: {
-    "Content-Type": "application/json",
-  },
-
+  // Put your actual Render URL here!
+  baseURL: "https://myapplication-backend.onrender.com/api", 
+  headers: { "Content-Type": "application/json" },
   timeout: 15000,
 });
-
 // ==============================
 // Request Interceptor
 // ==============================

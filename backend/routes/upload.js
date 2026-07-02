@@ -1,44 +1,38 @@
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
-const path = require("path");
 const User = require("../models/User"); 
-const Student = require("../models/Student"); // CRITICAL: Import the Student model
+const Student = require("../models/Student"); 
 
-// Set up Multer Storage
-const storage = multer.diskStorage({
-  destination: "./uploads/",
-  filename: (req, file, cb) => {
-    cb(null, `profile-${Date.now()}${path.extname(file.originalname)}`);
-  }
-});
+// CRITICAL: Import the upload middleware from your new Cloudinary config
+const { upload } = require("../config/cloudinary");
 
-const upload = multer({ storage });
-
-// POST /api/upload - Uploads a new photo
+// POST /api/upload - Uploads a new photo to Cloudinary
 router.post("/", upload.single("image"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: "No file uploaded" });
 
     const userId = req.body.userId; 
-    const filePath = req.file.path.replace(/\\/g, "/"); 
+    
+    // With Cloudinary, req.file.path is NOT a local folder. 
+    // It is the actual, secure HTTPS link to the image on the internet!
+    const imageUrl = req.file.path; 
 
     if (userId) {
       // 1. Update the User collection
-      await User.findByIdAndUpdate(userId, { profileImage: filePath });
+      await User.findByIdAndUpdate(userId, { profileImage: imageUrl });
       
-      // 2. Update the Student collection (This fixes your dashboard!)
-      await Student.findOneAndUpdate({ userId: userId }, { profileImage: filePath });
+      // 2. Update the Student collection
+      await Student.findOneAndUpdate({ userId: userId }, { profileImage: imageUrl });
     }
 
-    res.json({ success: true, profileImage: filePath });
+    res.json({ success: true, profileImage: imageUrl });
   } catch (err) {
     console.error("Upload error:", err);
     res.status(500).json({ message: "Upload failed" });
   }
 });
 
-// DELETE /api/upload/photo/:userId - Deletes the current photo
+// DELETE /api/upload/photo/:userId - Deletes the current photo from the database
 router.delete("/photo/:userId", async (req, res) => {
   try {
     const userId = req.params.userId;

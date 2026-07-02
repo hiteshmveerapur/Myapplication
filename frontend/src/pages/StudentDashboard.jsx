@@ -5,8 +5,8 @@ import StudentQRCode from "../components/StudentQRCode";
 import DownloadIDCard from "../components/DownloadIDCard";
 import PhotoUpload from "../components/PhotoUpload";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://myapplication-backend.onrender.com";
-
+// Put your actual Render URL here!
+const API_BASE_URL = "https://myapplication-backend.onrender.com";
 function StudentDashboard() {
   const [student, setStudent] = useState(null);
   const [attendance, setAttendance] = useState([]);
